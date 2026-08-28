@@ -91,10 +91,10 @@ hashcode (const unsigned char data[], size_t size)
 }
 
 static unsigned short
-checksum_crc(const unsigned char data[], unsigned int size, unsigned short init)
+checksum_crc(const unsigned char data[], size_t size, unsigned short init)
 {
 	unsigned short crc = init;
-	for (unsigned int i = 0; i < size; ++i) {
+	for (size_t i = 0; i < size; ++i) {
 		crc ^= data[i] << 8;
 		if (crc & 0x8000) {
 			crc <<= 1;
@@ -311,7 +311,7 @@ mclean_extreme_readdive (dc_device_t *abstract, dc_event_progress_t *progress, u
 	};
 
 	// Update and emit a progress event.
-	unsigned int initial = 0;
+	size_t initial = 0;
 	if (progress) {
 		initial = progress->current;
 		device_event_emit (abstract, DC_EVENT_PROGRESS, progress);
@@ -505,7 +505,7 @@ mclean_extreme_device_timesync(dc_device_t *abstract, const dc_datetime_t *datet
 	}
 
 	// Adjust the epoch.
-	unsigned int timestamp = ticks - EPOCH;
+	unsigned int timestamp = (unsigned int) (ticks - EPOCH);
 
 	// Send the command.
 	const unsigned char cmd[] = {
@@ -605,7 +605,7 @@ mclean_extreme_device_foreach(dc_device_t *abstract, dc_dive_callback_t callback
 
 		// Cache the pointer.
 		unsigned char *data = dc_buffer_get_data(buffer);
-		unsigned int size = dc_buffer_get_size(buffer);
+		size_t size = dc_buffer_get_size(buffer);
 
 		if (memcmp(data + SZ_CFG, device->fingerprint, sizeof(device->fingerprint)) == 0)
 			break;

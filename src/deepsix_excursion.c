@@ -454,7 +454,7 @@ deepsix_excursion_device_foreach (dc_device_t *abstract, dc_dive_callback_t call
 		}
 
 		unsigned char *data = dc_buffer_get_data(buffer);
-		unsigned int   size = dc_buffer_get_size(buffer);
+		size_t         size = dc_buffer_get_size(buffer);
 		if (callback && !callback (data, size, data + FP_OFFSET, sizeof(device->fingerprint), userdata)) {
 			break;
 		}

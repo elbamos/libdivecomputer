@@ -217,7 +217,7 @@ cressi_goa_device_download (cressi_goa_device_t *device, dc_buffer_t *buffer, dc
 	dc_transport_t transport = dc_iostream_get_transport (device->iostream);
 
 	const unsigned char ack[] = {ACK};
-	const unsigned int initial = progress ? progress->current : 0;
+	const size_t initial = progress ? progress->current : 0;
 
 	// Erase the contents of the buffer.
 	if (!dc_buffer_clear (buffer)) {
@@ -599,7 +599,7 @@ cressi_goa_device_foreach (dc_device_t *abstract, dc_dive_callback_t callback, v
 
 	// Count the number of dives.
 	unsigned int count = 0;
-	unsigned int offset = logbook_size;
+	size_t offset = logbook_size;
 	while (offset >= conf->logbook_len) {
 		// Move to the start of the logbook entry.
 		offset -= conf->logbook_len;
@@ -671,7 +671,7 @@ cressi_goa_device_foreach (dc_device_t *abstract, dc_dive_callback_t callback, v
 			id_size,
 			conf->logbook_len,
 		};
-		unsigned int headersize = sizeof(header) + id_size + conf->logbook_len;
+		size_t headersize = sizeof(header) + id_size + conf->logbook_len;
 		if (!dc_buffer_prepend(dive, logbook_data + offset, conf->logbook_len) ||
 			!dc_buffer_prepend(dive, id_data, id_size) ||
 			!dc_buffer_prepend(dive, header, sizeof(header))) {

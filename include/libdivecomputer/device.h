@@ -44,8 +44,8 @@ typedef enum dc_event_type_t {
 typedef struct dc_device_t dc_device_t;
 
 typedef struct dc_event_progress_t {
-	unsigned int current;
-	unsigned int maximum;
+	size_t current;
+	size_t maximum;
 } dc_event_progress_t;
 
 typedef struct dc_event_devinfo_t {
@@ -61,14 +61,14 @@ typedef struct dc_event_clock_t {
 
 typedef struct dc_event_vendor_t {
 	const unsigned char *data;
-	unsigned int size;
+	size_t size;
 } dc_event_vendor_t;
 
 typedef int (*dc_cancel_callback_t) (void *userdata);
 
 typedef void (*dc_event_callback_t) (dc_device_t *device, dc_event_type_t event, const void *data, void *userdata);
 
-typedef int (*dc_dive_callback_t) (const unsigned char *data, unsigned int size, const unsigned char *fingerprint, unsigned int fsize, void *userdata);
+typedef int (*dc_dive_callback_t) (const unsigned char *data, size_t size, const unsigned char *fingerprint, size_t fsize, void *userdata);
 
 dc_status_t
 dc_device_open (dc_device_t **out, dc_context_t *context, dc_descriptor_t *descriptor, dc_iostream_t *iostream);

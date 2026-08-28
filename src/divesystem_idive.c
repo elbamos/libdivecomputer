@@ -577,7 +577,7 @@ divesystem_idive_device_foreach (dc_device_t *abstract, dc_dive_callback_t callb
 		}
 
 		unsigned char *data = dc_buffer_get_data(buffer);
-		unsigned int   size = dc_buffer_get_size(buffer);
+		size_t         size = dc_buffer_get_size(buffer);
 		if (callback && !callback (data, size, data + 7, sizeof(device->fingerprint), userdata)) {
 			dc_buffer_free (buffer);
 			return DC_STATUS_SUCCESS;

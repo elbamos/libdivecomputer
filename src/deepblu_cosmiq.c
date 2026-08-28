@@ -297,7 +297,7 @@ deepblu_cosmiq_recv_bulk (deepblu_cosmiq_device_t *device, dc_event_progress_t *
 	dc_status_t status = DC_STATUS_SUCCESS;
 	dc_device_t *abstract = (dc_device_t *) device;
 
-	const unsigned int initial = progress ? progress->current : 0;
+	const size_t initial = progress ? progress->current : 0;
 
 	size_t nbytes = 0;
 	while (nbytes < size) {

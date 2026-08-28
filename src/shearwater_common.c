@@ -146,11 +146,11 @@ shearwater_common_decompress_lre (unsigned char *data, unsigned int size, dc_buf
 
 
 static int
-shearwater_common_decompress_xor (unsigned char *data, unsigned int size)
+shearwater_common_decompress_xor (unsigned char *data, size_t size)
 {
 	// Each block of 32 bytes is XOR'ed (in-place) with the previous block,
 	// except for the first block, which is passed through unchanged.
-	for (unsigned int i = 32; i < size; ++i) {
+	for (size_t i = 32; i < size; ++i) {
 		data[i] ^= data[i - 32];
 	}
 
@@ -469,7 +469,7 @@ shearwater_common_download (shearwater_common_device_t *device, dc_buffer_t *buf
 	}
 
 	// Enable progress notifications.
-	unsigned int initial = 0, current = 0, maximum = 3 + size + 1;
+	size_t initial = 0, current = 0, maximum = 3 + size + 1;
 	if (progress) {
 		initial = progress->current;
 		device_event_emit (abstract, DC_EVENT_PROGRESS, progress);
