@@ -529,6 +529,11 @@ tecdiving_divecomputereu_device_foreach (dc_device_t *abstract, dc_dive_callback
 		// Cache the pointer.
 		unsigned char *data = dc_buffer_get_data(buffer);
 		size_t size = dc_buffer_get_size(buffer);
+		if (size > UINT_MAX) {
+			ERROR (abstract->context, "Dive data is too large.");
+			status = DC_STATUS_DATAFORMAT;
+			goto error_buffer_free;
+		}
 
 		// Verify the logbook entry.
 		if (memcmp (data, logbook + offset, SZ_SUMMARY) != 0) {
@@ -537,7 +542,7 @@ tecdiving_divecomputereu_device_foreach (dc_device_t *abstract, dc_dive_callback
 			goto error_buffer_free;
 		}
 
-		if (callback && !callback (data, size, data, sizeof(device->fingerprint), userdata)) {
+		if (callback && !callback (data, (unsigned int) size, data, sizeof(device->fingerprint), userdata)) {
 			break;
 		}
 	}

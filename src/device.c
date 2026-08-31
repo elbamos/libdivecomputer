@@ -371,13 +371,15 @@ device_dump_read (dc_device_t *device, unsigned int address, unsigned char data[
 {
 	if (device == NULL)
 		return DC_STATUS_UNSUPPORTED;
+	if (size > UINT_MAX)
+		return DC_STATUS_INVALIDARGS;
 
 	if (device->vtable->read == NULL)
 		return DC_STATUS_UNSUPPORTED;
 
 	// Enable progress notifications.
 	dc_event_progress_t progress = EVENT_PROGRESS_INITIALIZER;
-	progress.maximum = size;
+	progress.maximum = (unsigned int) size;
 	device_event_emit (device, DC_EVENT_PROGRESS, &progress);
 
 	size_t nbytes = 0;

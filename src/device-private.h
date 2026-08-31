@@ -33,7 +33,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#define EVENT_PROGRESS_INITIALIZER {0, SIZE_MAX}
+#define EVENT_PROGRESS_INITIALIZER {0, UINT_MAX}
 
 struct dc_device_t;
 struct dc_device_vtable_t;

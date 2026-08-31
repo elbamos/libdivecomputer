@@ -207,9 +207,14 @@ citizen_aqualand_device_foreach (dc_device_t *abstract, dc_dive_callback_t callb
 		dc_buffer_free (buffer);
 		return DC_STATUS_DATAFORMAT;
 	}
+	if (size > UINT_MAX) {
+		ERROR (abstract->context, "Dive data is too large.");
+		dc_buffer_free (buffer);
+		return DC_STATUS_DATAFORMAT;
+	}
 
 	if (callback && memcmp (data + 0x05, device->fingerprint, sizeof (device->fingerprint)) != 0) {
-		callback (data, size, data + 0x05, sizeof (device->fingerprint), userdata);
+		callback (data, (unsigned int) size, data + 0x05, sizeof (device->fingerprint), userdata);
 	}
 
 	dc_buffer_free (buffer);

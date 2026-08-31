@@ -469,7 +469,7 @@ shearwater_common_download (shearwater_common_device_t *device, dc_buffer_t *buf
 	}
 
 	// Enable progress notifications.
-	size_t initial = 0, current = 0, maximum = 3 + size + 1;
+	unsigned int initial = 0, current = 0, maximum = 3 + size + 1;
 	if (progress) {
 		initial = progress->current;
 		device_event_emit (abstract, DC_EVENT_PROGRESS, progress);

@@ -531,7 +531,7 @@ suunto_vyper_device_foreach (dc_device_t *abstract, dc_dive_callback_t callback,
 			return DC_STATUS_SUCCESS;
 		}
 
-		if (callback && !callback (data, size, data + layout->fp_offset, sizeof (device->fingerprint), userdata)) {
+		if (callback && !callback (data, (unsigned int) size, data + layout->fp_offset, sizeof (device->fingerprint), userdata)) {
 			dc_buffer_free (buffer);
 			return DC_STATUS_SUCCESS;
 		}

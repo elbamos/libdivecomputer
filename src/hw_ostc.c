@@ -622,11 +622,14 @@ hw_ostc_extract_dives (dc_device_t *abstract, const unsigned char data[], size_t
 		if (previous) {
 			// Move the pointer to the end of the footer.
 			previous += sizeof (footer);
+			size_t dive_size = previous - current;
+			if (dive_size > UINT_MAX)
+				return DC_STATUS_DATAFORMAT;
 
 			if (device && memcmp (current + 3, device->fingerprint, sizeof (device->fingerprint)) == 0)
 				return DC_STATUS_SUCCESS;
 
-			if (callback && !callback (current, previous - current, current + 3, 5, userdata))
+			if (callback && !callback (current, (unsigned int) dive_size, current + 3, 5, userdata))
 				return DC_STATUS_SUCCESS;
 		}
 

@@ -606,6 +606,9 @@ reefnet_sensusultra_parse (reefnet_sensusultra_device_t *device,
 		if (previous) {
 			// Move the pointer to the end of the footer.
 			previous += sizeof (footer);
+			size_t dive_size = previous - current;
+			if (dive_size > UINT_MAX)
+				return DC_STATUS_DATAFORMAT;
 
 			// Automatically abort when a dive is older than the provided timestamp.
 			unsigned int timestamp = array_uint32_le (current + 4);
@@ -615,7 +618,7 @@ reefnet_sensusultra_parse (reefnet_sensusultra_device_t *device,
 				return DC_STATUS_SUCCESS;
 			}
 
-			if (callback && !callback (current, previous - current, current + 4, 4, userdata)) {
+			if (callback && !callback (current, (unsigned int) dive_size, current + 4, 4, userdata)) {
 				if (aborted)
 					*aborted = 1;
 				return DC_STATUS_SUCCESS;

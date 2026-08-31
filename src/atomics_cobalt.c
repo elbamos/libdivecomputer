@@ -356,13 +356,18 @@ atomics_cobalt_device_foreach (dc_device_t *abstract, dc_dive_callback_t callbac
 			dc_buffer_free (buffer);
 			return DC_STATUS_DATAFORMAT;
 		}
+		if (size > UINT_MAX) {
+			ERROR (abstract->context, "Dive data is too large.");
+			dc_buffer_free (buffer);
+			return DC_STATUS_DATAFORMAT;
+		}
 
 		if (memcmp (data + FP_OFFSET, device->fingerprint, sizeof (device->fingerprint)) == 0) {
 			dc_buffer_free (buffer);
 			return DC_STATUS_SUCCESS;
 		}
 
-		if (callback && !callback (data, size, data + FP_OFFSET, sizeof (device->fingerprint), userdata)) {
+		if (callback && !callback (data, (unsigned int) size, data + FP_OFFSET, sizeof (device->fingerprint), userdata)) {
 			dc_buffer_free (buffer);
 			return DC_STATUS_SUCCESS;
 		}

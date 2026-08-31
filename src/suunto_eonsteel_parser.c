@@ -1020,7 +1020,11 @@ static dc_status_t
 suunto_eonsteel_parser_samples_foreach(dc_parser_t *abstract, dc_sample_callback_t callback, void *userdata)
 {
 	suunto_eonsteel_parser_t *eon = (suunto_eonsteel_parser_t *) abstract;
-	struct sample_data data = { eon, callback, userdata, 0 };
+	struct sample_data data = {
+		.eon = eon,
+		.callback = callback,
+		.userdata = userdata,
+	};
 
 	traverse_data(eon, traverse_samples, &data);
 

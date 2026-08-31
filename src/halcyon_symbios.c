@@ -285,7 +285,7 @@ halcyon_symbios_download (halcyon_symbios_device_t *device, dc_event_progress_t 
 		goto error_exit;
 	}
 
-	const size_t initial = progress ? progress->current : 0;
+	const unsigned int initial = progress ? progress->current : 0;
 
 	unsigned int counter = 1;
 	unsigned int nbytes = 0;
@@ -346,7 +346,7 @@ halcyon_symbios_download (halcyon_symbios_device_t *device, dc_event_progress_t 
 		if (progress) {
 			// Limit the progress events to the announced length.
 			unsigned int n = nbytes > length ? length : nbytes;
-			progress->current = initial + STEP(n, length);
+			progress->current = initial + (unsigned int) STEP(n, length);
 			device_event_emit (abstract, DC_EVENT_PROGRESS, progress);
 		}
 
@@ -463,7 +463,7 @@ halcyon_symbios_device_foreach (dc_device_t *abstract, dc_dive_callback_t callba
 	// Emit a vendor event.
 	dc_event_vendor_t vendor;
 	vendor.data = info;
-	vendor.size = info_size;
+	vendor.size = (unsigned int) info_size;
 	device_event_emit (abstract, DC_EVENT_VENDOR, &vendor);
 
 	// Emit a device info event.
@@ -557,7 +557,13 @@ halcyon_symbios_device_foreach (dc_device_t *abstract, dc_dive_callback_t callba
 			goto error_free;
 		}
 
-		if (callback && !callback (dc_buffer_get_data (dive), dc_buffer_get_size (dive), data + offset + FP_OFFSET, FP_SIZE, userdata)) {
+		size_t dive_size = dc_buffer_get_size (dive);
+		if (dive_size > UINT_MAX) {
+			ERROR (abstract->context, "Dive data is too large.");
+			status = DC_STATUS_DATAFORMAT;
+			goto error_free;
+		}
+		if (callback && !callback (dc_buffer_get_data (dive), (unsigned int) dive_size, data + offset + FP_OFFSET, FP_SIZE, userdata)) {
 			break;
 		}
 	}

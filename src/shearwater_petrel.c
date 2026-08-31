@@ -340,7 +340,12 @@ shearwater_petrel_device_foreach (dc_device_t *abstract, dc_dive_callback_t call
 
 		unsigned char *buf = dc_buffer_get_data (buffer);
 		size_t len = dc_buffer_get_size (buffer);
-		if (callback && !callback (buf, len, buf + 12, sizeof (device->fingerprint), userdata))
+		if (len > UINT_MAX) {
+			ERROR (abstract->context, "Dive data is too large.");
+			rc = DC_STATUS_DATAFORMAT;
+			break;
+		}
+		if (callback && !callback (buf, (unsigned int) len, buf + 12, sizeof (device->fingerprint), userdata))
 			break;
 
 		offset += RECORD_SIZE;

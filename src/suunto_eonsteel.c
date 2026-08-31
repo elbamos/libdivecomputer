@@ -787,8 +787,14 @@ suunto_eonsteel_device_foreach(dc_device_t *abstract, dc_dive_callback_t callbac
 
 			data = dc_buffer_get_data(file);
 			size = dc_buffer_get_size(file);
+			if (size > UINT_MAX) {
+				ERROR (abstract->context, "Dive data is too large.");
+				dc_status_set_error(&status, DC_STATUS_DATAFORMAT);
+				skip = 1;
+				break;
+			}
 
-			if (callback && !callback(data, size, data, sizeof(eon->fingerprint), userdata))
+			if (callback && !callback(data, (unsigned int) size, data, sizeof(eon->fingerprint), userdata))
 				skip = 1;
 		}
 		progress.current++;

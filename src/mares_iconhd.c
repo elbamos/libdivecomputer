@@ -444,7 +444,7 @@ mares_iconhd_read_object(mares_iconhd_device_t *device, dc_event_progress_t *pro
 		504;
 
 	// Update and emit a progress event.
-	size_t initial = 0;
+	unsigned int initial = 0;
 	if (progress) {
 		initial = progress->current;
 		device_event_emit (abstract, DC_EVENT_PROGRESS, progress);
@@ -1143,7 +1143,13 @@ mares_iconhd_device_foreach_object (dc_device_t *abstract, dc_dive_callback_t ca
 		}
 
 		const unsigned char *data = dc_buffer_get_data (buffer);
-		if (callback && !callback (data, dc_buffer_get_size (buffer), data + 0x08, device->fingerprint_size, userdata)) {
+		size_t size = dc_buffer_get_size (buffer);
+		if (size > UINT_MAX) {
+			ERROR (abstract->context, "Dive data is too large.");
+			rc = DC_STATUS_DATAFORMAT;
+			break;
+		}
+		if (callback && !callback (data, (unsigned int) size, data + 0x08, device->fingerprint_size, userdata)) {
 			break;
 		}
 	}

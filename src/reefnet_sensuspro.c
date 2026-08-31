@@ -384,8 +384,11 @@ reefnet_sensuspro_extract_dives (dc_device_t *abstract, const unsigned char data
 			unsigned int timestamp = array_uint32_le (data + current + 6);
 			if (device && timestamp <= device->timestamp)
 				return DC_STATUS_SUCCESS;
+			size_t dive_size = offset + 2 - current;
+			if (dive_size > UINT_MAX)
+				return DC_STATUS_DATAFORMAT;
 
-			if (callback && !callback (data + current, offset + 2 - current, data + current + 6, 4, userdata))
+			if (callback && !callback (data + current, (unsigned int) dive_size, data + current + 6, 4, userdata))
 				return DC_STATUS_SUCCESS;
 
 			// Prepare for the next dive.

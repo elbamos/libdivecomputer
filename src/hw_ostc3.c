@@ -1624,10 +1624,15 @@ hw_ostc3_device_fwupdate4 (dc_device_t *abstract, const char *filename)
 	if (status != DC_STATUS_SUCCESS) {
 		goto error;
 	}
+	if (dc_buffer_get_size (buffer) > UINT_MAX) {
+		ERROR (context, "Firmware file is too large.");
+		status = DC_STATUS_INVALIDARGS;
+		goto error;
+	}
 
 	// Enable progress notifications.
 	dc_event_progress_t progress = EVENT_PROGRESS_INITIALIZER;
-	progress.maximum = dc_buffer_get_size (buffer);
+	progress.maximum = (unsigned int) dc_buffer_get_size (buffer);
 	device_event_emit (abstract, DC_EVENT_PROGRESS, &progress);
 
 	// Cache the pointer and size.

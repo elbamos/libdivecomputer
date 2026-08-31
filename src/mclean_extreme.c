@@ -311,7 +311,7 @@ mclean_extreme_readdive (dc_device_t *abstract, dc_event_progress_t *progress, u
 	};
 
 	// Update and emit a progress event.
-	size_t initial = 0;
+	unsigned int initial = 0;
 	if (progress) {
 		initial = progress->current;
 		device_event_emit (abstract, DC_EVENT_PROGRESS, progress);
@@ -347,7 +347,7 @@ mclean_extreme_readdive (dc_device_t *abstract, dc_event_progress_t *progress, u
 
 	// Update and emit a progress event.
 	if (progress) {
-		progress->current = initial + STEP(sizeof(header), size);
+		progress->current = initial + (unsigned int) STEP(sizeof(header), size);
 		device_event_emit (abstract, DC_EVENT_PROGRESS, progress);
 	}
 
@@ -606,11 +606,16 @@ mclean_extreme_device_foreach(dc_device_t *abstract, dc_dive_callback_t callback
 		// Cache the pointer.
 		unsigned char *data = dc_buffer_get_data(buffer);
 		size_t size = dc_buffer_get_size(buffer);
+		if (size > UINT_MAX) {
+			ERROR (abstract->context, "Dive data is too large.");
+			status = DC_STATUS_DATAFORMAT;
+			goto error_buffer_free;
+		}
 
 		if (memcmp(data + SZ_CFG, device->fingerprint, sizeof(device->fingerprint)) == 0)
 			break;
 
-		if (callback && !callback (data, size, data + SZ_CFG, sizeof(device->fingerprint), userdata)) {
+		if (callback && !callback (data, (unsigned int) size, data + SZ_CFG, sizeof(device->fingerprint), userdata)) {
 			break;
 		}
 	}
